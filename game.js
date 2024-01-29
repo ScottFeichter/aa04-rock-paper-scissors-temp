@@ -1,19 +1,19 @@
-const readline = require('readline');
+const readline = require("readline");
 
 /********************************* CONSTANTS *********************************/
 const VALID_MOVES = {
   r: {
-    name: 'Rock',
-    winsAgainst: 's'
+    name: "Rock",
+    winsAgainst: "s",
   },
   p: {
-    name: 'Paper',
-    winsAgainst: 'r'
+    name: "Paper",
+    winsAgainst: "r",
   },
   s: {
-    name: 'Scissors',
-    winsAgainst: 'p'
-  }
+    name: "Scissors",
+    winsAgainst: "p",
+  },
 };
 
 /********************************* GAME DATA *********************************/
@@ -25,65 +25,75 @@ let ties = 0;
 
 /***************************** HELPER FUNCTIONS ******************************/
 function printHelp() {
-  // Your code here 
+  console.log("\nHelp:\n");
+  console.log("  Type 'r' for Rock");
+  console.log("  Type 'p' for Paper");
+  console.log("  Type 's' for Scissors");
+  console.log("  Type 'q' to quit");
+  console.log("  Type 'h' for a list of valid commands\n");
 }
 
-function getWinner(move1, move2) {
-  // Your code here 
+function getWinner(cmd, cpu) {
+  if (cmd === cpu) {
+    // tie
+    console.log("You tie.\n");
+    ties++;
+  } else if (VALID_MOVES[cmd].winsAgainst === cpu) {
+    // win
+    console.log("You win!\n");
+    wins++;
+  } else {
+    // loss
+    console.log("You lose...\n");
+    losses++;
+  }
 }
 
 function getCPUMove() {
-  // Your code here 
+  const validMoveKeys = Object.keys(VALID_MOVES);
+  const randomIndex = Math.floor(Math.random() * validMoveKeys.length);
+  const cpu = validMoveKeys[randomIndex];
+  return cpu;
 }
 
-function processMove(cmd, cpu) {
-  // Your code here 
+function valid(cmd) {
+  const cpu = getCPUMove();
+  console.log(`You pick ${cmd}, computer picks ${cpu}.`);
+  getWinner(cmd, cpu);
+  promptInput(rl);
+}
+
+function invalid() {
+  console.log("\nInvalid command.\n");
+  console.log("  Type 'r' for Rock");
+  console.log("  Type 'p' for Paper");
+  console.log("  Type 's' for Scissors");
+  console.log("  Type 'q' to quit");
+  console.log("  Type 'h' for a list of valid commands\n");
+  promptInput(rl);
+}
+
+function processMove(cmd) {
+  if (cmd === "h") {
+    printHelp();
+    promptInput(rl);
+  } else if (cmd === "q") {
+    rl.close();
+  } else if (VALID_MOVES[cmd]) {
+    valid(cmd);
+  } else {
+    invalid();
+  }
 }
 
 /******************************* MAIN FUNCTION *******************************/
 function promptInput(rl) {
   console.log(`${wins} wins - ${losses} losses - ${ties} ties`);
-  rl.question('> ', (cmd) => {
+  rl.question("> ", (cmd) => {
     cmd = cmd.toLowerCase();
 
-    if (cmd === 'h') {
-      console.log("\nHelp:\n");
-      console.log("  Type 'r' for Rock");
-      console.log("  Type 'p' for Paper");
-      console.log("  Type 's' for Scissors");
-      console.log("  Type 'q' to quit");
-      console.log("  Type 'h' for a list of valid commands\n");
-    } else if (cmd === 'q') {
-      rl.close();
-      return;
-    } else if (VALID_MOVES[cmd]){
-      const validMoveKeys = Object.keys(VALID_MOVES);
-      const randomIndex = Math.floor(Math.random() * validMoveKeys.length);
-      const cpu = validMoveKeys[randomIndex];
-
-      console.log(`You pick ${cmd}, computer picks ${cpu}.`);
-
-      if (cmd === cpu) { // tie
-        console.log("You tie.\n");
-        ties++;
-      }
-      else if (VALID_MOVES[cmd].winsAgainst === cpu) { // win
-        console.log("You win!\n");
-        wins++;
-      } else { // loss
-        console.log("You lose...\n");
-        losses++;
-      }
-    } else {
-      console.log("\nInvalid command.\n");
-      console.log("  Type 'r' for Rock");
-      console.log("  Type 'p' for Paper");
-      console.log("  Type 's' for Scissors");
-      console.log("  Type 'q' to quit");
-      console.log("  Type 'h' for a list of valid commands\n");
-    }
-
-    promptInput(rl);
+    processMove(cmd);
+    return;
   });
 }
 
@@ -91,7 +101,7 @@ function promptInput(rl) {
 function initializeGame() {
   const rl = readline.createInterface({
     input: process.stdin,
-    output: process.stdout
+    output: process.stdout,
   });
   console.log("Welcome to Rock/Paper/Scissors\n");
   console.log("  Type 'r' for Rock");
@@ -105,7 +115,7 @@ function initializeGame() {
 
 // start the game if running this file directly, `node game.js`
 // do not start the game if running test specs
-if (typeof require !== 'undefined' && require.main === module) {
+if (typeof require !== "undefined" && require.main === module) {
   initializeGame();
 }
 
@@ -116,5 +126,5 @@ module.exports = {
   getWinner,
   getCPUMove,
   processMove,
-  promptInput
+  promptInput,
 };
